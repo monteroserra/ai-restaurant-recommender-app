@@ -4,7 +4,7 @@ Configuration file for the AI Restaurant Recommender App
 """
 
 # Google Maps API Key - Get yours from: https://console.cloud.google.com/
-GOOGLE_MAP_API_KEY = "AIzaSyCRwDRASI5kMkmmZ07Gbzf1y5k_ED6jBZM"
+GOOGLE_MAP_API_KEY = ""
 
 # Default coordinates (optional - these are now set in the UI)
 # You can change these to your preferred default location
