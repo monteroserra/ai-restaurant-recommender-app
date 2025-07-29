@@ -1,123 +1,203 @@
-# main.py
 """
-AI Restaurant Recommender App
-Main application entry point that coordinates UI, location services, and restaurant services
+Main application entry point for Restaurant Recommender with AI Analysis
 """
-
-import sys
+import tkinter as tk
+from tkinter import messagebox
+import logging
 import os
+import sys
 
-# Add the parent directory (project root) to sys.path if needed
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('restaurant_app.log'),
+        logging.StreamHandler()
+    ]
+)
 
-from ui import RestaurantFinderUI
-from restaurant_service import RestaurantService
-from location_service import LocationService
+logger = logging.getLogger(__name__)
 
-class RestaurantRecommenderApp:
-    def __init__(self):
-        self.restaurant_service = RestaurantService()
-        self.location_service = LocationService()
-        self.ui = RestaurantFinderUI(self.search_restaurants)
-        
-    def search_restaurants(self, location_data, radius, min_reviews, max_results):
-        """
-        Main search logic that coordinates location resolution and restaurant search
-        """
+def check_dependencies():
+    """Check if all required modules are available."""
+    required_modules = [
+        'requests',
+        'tkinter'
+    ]
+    
+    missing_modules = []
+    
+    for module in required_modules:
         try:
-            # Step 1: Get coordinates
-            coordinates = self.resolve_location(location_data)
-            if coordinates is None:
-                return
-            
-            lat, lng = coordinates
-            
-            # Step 2: Search for restaurants
-            self.ui.status_var.set("Searching for restaurants...")
-            restaurants = self.restaurant_service.search_restaurants(
-                lat, lng, radius, min_reviews, max_results
-            )
-            
-            if not restaurants:
-                location_str = self.format_location_string(location_data, lat, lng)
-                self.ui.display_results([], location_str)
-                return
-            
-            # Step 3: Add walking distances
-            self.ui.status_var.set("Calculating walking distances...")
-            self.restaurant_service.add_walking_distances(restaurants, lat, lng)
-            
-            # Step 4: Format results
-            formatted_restaurants = [
-                self.restaurant_service.format_restaurant_data(place) 
-                for place in restaurants
-            ]
-            
-            # Step 5: Display results
-            location_str = self.format_location_string(location_data, lat, lng)
-            self.ui.display_results(formatted_restaurants, location_str)
-            
-        except Exception as e:
-            self.ui.show_error(f"Search failed: {str(e)}")
-            print(f"Search error: {e}")  # For debugging
+            __import__(module)
+        except ImportError:
+            missing_modules.append(module)
     
-    def resolve_location(self, location_data):
-        """
-        Convert location data to coordinates
-        Returns (lat, lng) tuple or None if failed
-        """
-        if location_data["type"] == "coordinates":
-            # Validate coordinates
-            coordinates = self.location_service.validate_coordinates(
-                location_data["lat"], location_data["lng"]
-            )
-            if coordinates is None:
-                self.ui.show_error("Invalid coordinates. Please check your latitude and longitude values.")
-                return None
-            return coordinates
-            
-        elif location_data["type"] == "address":
-            # Convert address to coordinates
-            self.ui.status_var.set("Converting address to coordinates...")
-            coordinates = self.location_service.get_coordinates_from_address(
-                location_data["address"]
-            )
-            if coordinates is None:
-                self.ui.show_error("Could not find coordinates for the given address. Please try a different address.")
-                return None
-            return coordinates
+    if missing_modules:
+        error_msg = f"Missing required modules: {', '.join(missing_modules)}\n"
+        error_msg += "Please install them using: pip install " + " ".join(missing_modules)
+        print(error_msg)
+        return False
+    
+    return True
+
+def validate_configuration():
+    """Validate application configuration."""
+    try:
+        from config import validate_config
+        config_status = validate_config()
         
-        return None
+        if not config_status['valid']:
+            error_msg = "Configuration Issues:\n" + "\n".join(config_status['issues'])
+            error_msg += "\n\nPlease check your config.py file and ensure API keys are set."
+            
+            # Show error in GUI if possible
+            try:
+                root = tk.Tk()
+                root.withdraw()  # Hide main window
+                messagebox.showerror("Configuration Error", error_msg)
+                root.destroy()
+            except:
+                print(error_msg)
+            
+            return False
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"Configuration validation failed: {e}")
+        return False
+
+def create_cache_directory():
+    """Create cache directory if it doesn't exist."""
+    try:
+        from config import CACHE_DIR
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        logger.info(f"Cache directory ready: {CACHE_DIR}")
+    except Exception as e:
+        logger.warning(f"Could not create cache directory: {e}")
+
+class RestaurantApp:
+    def __init__(self):
+        self.root = None
+        self.ui = None
     
-    def format_location_string(self, location_data, lat, lng):
-        """
-        Create a readable location string for display
-        """
-        if location_data["type"] == "coordinates":
-            return f"coordinates ({lat:.4f}, {lng:.4f})"
-        else:
-            return f"{location_data['address']} ({lat:.4f}, {lng:.4f})"
+    def initialize(self):
+        """Initialize the application."""
+        logger.info("Initializing Restaurant Recommender Application")
+        
+        # Create main window
+        self.root = tk.Tk()
+        self.root.title("AI Restaurant Recommender")
+        
+        # Set window properties
+        from config import WINDOW_WIDTH, WINDOW_HEIGHT
+        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
+        self.root.minsize(600, 500)
+        
+        # Center window on screen
+        self.center_window()
+        
+        # Set window icon (if available)
+        try:
+            # You can add an icon file here
+            # self.root.iconbitmap("icon.ico")
+            pass
+        except:
+            pass
+        
+        # Configure window close behavior
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
+        # Initialize UI
+        from ui import RestaurantUI
+        self.ui = RestaurantUI(self.root)
+        
+        logger.info("Application initialized successfully")
+    
+    def center_window(self):
+        """Center the main window on screen."""
+        self.root.update_idletasks()
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+        x = (self.root.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.root.winfo_screenheight() // 2) - (height // 2)
+        self.root.geometry(f"{width}x{height}+{x}+{y}")
     
     def run(self):
-        """
-        Start the application
-        """
-        print("🍽️ Starting AI Restaurant Recommender App...")
-        print("Make sure you have your Google Maps API key configured in config.py")
-        self.ui.run()
+        """Run the application main loop."""
+        if not self.root:
+            raise RuntimeError("Application not initialized. Call initialize() first.")
+        
+        try:
+            logger.info("Starting application main loop")
+            self.root.mainloop()
+        except KeyboardInterrupt:
+            logger.info("Application interrupted by user")
+        except Exception as e:
+            logger.error(f"Application error: {e}")
+            messagebox.showerror("Application Error", f"An unexpected error occurred: {e}")
+        finally:
+            logger.info("Application shutting down")
+    
+    def on_closing(self):
+        """Handle application closing."""
+        try:
+            # Cleanup operations
+            if self.ui:
+                self.ui.cleanup()
+            
+            # Clear any ongoing operations
+            from restaurant_analyzer import restaurant_analyzer
+            if restaurant_analyzer.is_analyzing:
+                result = messagebox.askquestion(
+                    "Analysis in Progress",
+                    "An analysis is currently running. Do you want to exit anyway?",
+                    icon='warning'
+                )
+                if result != 'yes':
+                    return
+            
+            logger.info("Application closed by user")
+            self.root.destroy()
+            
+        except Exception as e:
+            logger.error(f"Error during shutdown: {e}")
+            self.root.destroy()
 
 def main():
-    """
-    Application entry point
-    """
+    """Main application entry point."""
+    print("Starting AI Restaurant Recommender...")
+    print("=" * 50)
+    
+    # Check dependencies
+    if not check_dependencies():
+        sys.exit(1)
+    
+    # Validate configuration
+    if not validate_configuration():
+        sys.exit(1)
+    
+    # Create cache directory
+    create_cache_directory()
+    
+    # Create and run application
     try:
-        app = RestaurantRecommenderApp()
+        app = RestaurantApp()
+        app.initialize()
         app.run()
-    except ImportError as e:
-        print(f"Configuration Error: {e}")
-        print("Please make sure you have a config.py file with your GOOGLE_MAP_API_KEY")
+        
     except Exception as e:
-        print(f"Application Error: {e}")
+        logger.error(f"Fatal application error: {e}")
+        try:
+            messagebox.showerror(
+                "Fatal Error",
+                f"The application encountered a fatal error and must close:\n\n{e}"
+            )
+        except:
+            print(f"Fatal Error: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,72 @@
+{
+  "-8251653129100860568": {
+    "analysis": {
+      "cuisine_type": "N/A (Hotel, not a restaurant)",
+      "ambience": "N/A (Hotel, not a restaurant)",
+      "highlights": [
+        "Breakfast buffet (scrambled eggs, sausages/pancakes, tater tots, juice, croissants, bread, fruits, coffee)",
+        "Convenient location (near WTC, subway stations, attractions)",
+        "Friendly and helpful staff",
+        "Free water and clementines provided",
+        "Clean rooms"
+      ],
+      "complaints": [
+        "Cockroach infestation",
+        "Unresponsive room service",
+        "Extremely small rooms",
+        "Air conditioning issues"
+      ],
+      "overall_sentiment": "Mixed; positive reviews highlight location and staff, while negative reviews focus on significant hygiene and service issues.",
+      "price_range": "N/A (Not specified in reviews)",
+      "best_dishes": [
+        "Scrambled eggs",
+        "Sausages/Pancakes",
+        "Tater tots"
+      ],
+      "service_quality": "Highly inconsistent; ranging from friendly and helpful to inattentive, unresponsive, and even aggressive."
+    },
+    "timestamp": 1753793745.474023,
+    "review_count": 3,
+    "restaurant_name": "The Frederick Hotel",
+    "fallback_used": false
+  },
+  "-3953265388002554821": {
+    "analysis": {
+      "cuisine_type": "Unknown",
+      "ambience": "Peaceful, beautiful, magical views, especially at night.",
+      "highlights": [
+        "Magical night views",
+        "Best view of the Brooklyn Bridge",
+        "Nicest and most peaceful place in NYC"
+      ],
+      "complaints": [],
+      "overall_sentiment": "Overwhelmingly positive; reviews praise the ambiance and views.",
+      "price_range": "Potentially high (USD 500M mentioned in one review, likely unrelated to meal cost)",
+      "best_dishes": [],
+      "service_quality": "One review mentions 'service & cleaning' but provides no further detail."
+    },
+    "timestamp": 1753793820.3345861,
+    "review_count": 4,
+    "restaurant_name": "The Seaport",
+    "fallback_used": false
+  },
+  "-6389286194851637389": {
+    "analysis": {
+      "cuisine_type": "Unknown",
+      "ambience": "Unknown",
+      "highlights": [],
+      "complaints": [
+        "Order cancellation 5 minutes before pickup",
+        "Rude treatment by staff member Lourdes"
+      ],
+      "overall_sentiment": "Extremely negative",
+      "price_range": "Unknown",
+      "best_dishes": [],
+      "service_quality": "Very poor; order cancellation and rude staff reported."
+    },
+    "timestamp": 1753793918.4217007,
+    "review_count": 2,
+    "restaurant_name": "Àsia amb Gràcia",
+    "fallback_used": false
+  }
+}

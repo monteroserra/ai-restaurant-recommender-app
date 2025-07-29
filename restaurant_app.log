@@ -1,0 +1,22 @@
+2025-07-29 14:34:01,304 - __main__ - ERROR - Configuration validation failed: name 'GOOGLE_MAPS_API_KEY' is not defined
+2025-07-29 14:59:19,675 - __main__ - INFO - Cache directory ready: cache
+2025-07-29 14:59:19,676 - __main__ - INFO - Initializing Restaurant Recommender Application
+2025-07-29 14:59:19,991 - __main__ - INFO - Application initialized successfully
+2025-07-29 14:59:19,992 - __main__ - INFO - Starting application main loop
+2025-07-29 14:59:24,700 - ui - INFO - Searching restaurants at 40.7579747, -73.9855426
+2025-07-29 14:59:24,701 - restaurant_service - INFO - Searching for restaurants near 40.7579747, -73.9855426
+2025-07-29 14:59:26,236 - restaurant_service - INFO - Found 5 restaurants matching criteria
+2025-07-29 14:59:27,753 - restaurant_analyzer - INFO - Starting analysis for place_id: ChIJR9So-lRYwokRX1xEjA0rChA
+2025-07-29 14:59:27,757 - review_service - INFO - Fetching fresh reviews for place_id: ChIJR9So-lRYwokRX1xEjA0rChA
+2025-07-29 14:59:28,087 - analysis_service - INFO - Analyzing 3 reviews with Gemini AI
+2025-07-29 14:59:28,093 - analysis_service - INFO - Trying Gemini model: gemini-1.5-flash
+2025-07-29 15:00:28,159 - analysis_service - WARNING - Request timeout on attempt 1
+2025-07-29 15:01:08,346 - analysis_service - WARNING - Request timeout on attempt 2
+2025-07-29 15:01:48,430 - analysis_service - WARNING - Request timeout on attempt 3
+2025-07-29 15:01:48,441 - analysis_service - INFO - Trying Gemini model: gemini-1.0-pro
+2025-07-29 15:01:48,630 - analysis_service - INFO - Gemini API response status: 404
+2025-07-29 15:01:48,630 - analysis_service - WARNING - Model gemini-1.0-pro not found, trying next...
+2025-07-29 15:01:48,631 - analysis_service - INFO - Trying Gemini model: gemini-1.5-flash
+2025-07-29 15:02:17,562 - ui - INFO - UI cleanup completed
+2025-07-29 15:02:19,239 - __main__ - INFO - Application closed by user
+2025-07-29 15:02:19,293 - __main__ - INFO - Application shutting down
